@@ -1,0 +1,537 @@
+body.settings_page_filegate,
+body.settings_page_filegate #wpbody-content {
+    background: #ffffff;
+}
+
+.filegate-admin {
+    --filegate-bg: #ffffff;
+    --filegate-panel: #ffffff;
+    --filegate-border: #d7e4e8;
+    --filegate-text: #20313a;
+    --filegate-muted: #60717a;
+    --filegate-accent: #30839b;
+    --filegate-accent-soft: #e3f0f4;
+    --filegate-caution: #966434;
+    --filegate-caution-soft: #f7ede2;
+    color: var(--filegate-text);
+}
+
+.filegate-admin h1,
+.filegate-panel-heading h2,
+.filegate-callout h3,
+.filegate-compatibility h3,
+.filegate-card h3 {
+    color: #20313a;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.filegate-page-title {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.filegate-page-title h1 {
+    margin: 0;
+}
+
+.filegate-save-indicator {
+    align-items: center;
+    background: #edf5f7;
+    border-radius: 999px;
+    color: #536771;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 7px 12px;
+    white-space: nowrap;
+}
+
+.filegate-save-indicator.is-saving {
+    background: var(--filegate-accent-soft);
+    color: var(--filegate-accent);
+}
+
+.filegate-save-indicator.is-unsaved {
+    background: #eef4f6;
+    color: #48606a;
+}
+
+.filegate-save-indicator.is-saved {
+    background: #eef7f2;
+    color: #2f6d54;
+}
+
+.filegate-page-title__logo {
+    align-items: center;
+    background: #f5fbfd;
+    border: 1px solid var(--filegate-border);
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(32, 49, 58, 0.06);
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 58px;
+    justify-content: center;
+    overflow: hidden;
+    width: 58px;
+}
+
+.filegate-page-title__logo img {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+}
+
+.filegate-admin form {
+    max-width: 1120px;
+}
+
+.filegate-intro {
+    max-width: 72ch;
+    color: var(--filegate-muted);
+    margin: 4px 0 20px;
+}
+
+.filegate-toast-stack {
+    display: grid;
+    gap: 10px;
+    pointer-events: none;
+    position: fixed;
+    right: 24px;
+    top: 42px;
+    width: min(360px, calc(100vw - 32px));
+    z-index: 100000;
+}
+
+.filegate-toast {
+    background: #ffffff;
+    border: 1px solid var(--filegate-border);
+    border-left: 4px solid var(--filegate-accent);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(32, 49, 58, 0.12);
+    display: flex;
+    gap: 12px;
+    opacity: 0;
+    padding: 14px 16px;
+    pointer-events: auto;
+    transform: translateY(-8px);
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.filegate-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.filegate-toast.is-warning {
+    border-left-color: #b07a3d;
+}
+
+.filegate-toast.is-error {
+    border-left-color: #b42318;
+}
+
+.filegate-toast__body {
+    flex: 1 1 auto;
+}
+
+.filegate-toast__title {
+    color: #20313a;
+    display: block;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.filegate-toast__details {
+    color: var(--filegate-muted);
+    margin: 8px 0 0 18px;
+}
+
+.filegate-toast__details li {
+    margin: 0;
+}
+
+.filegate-toast__close {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: #60717a;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.filegate-brand-panel {
+    align-items: center;
+    background: #f5fbfd;
+    border: 1px solid var(--filegate-border);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(32, 49, 58, 0.035);
+    display: flex;
+    gap: 18px;
+    justify-content: space-between;
+    margin: 0 0 18px;
+    padding: 20px 24px;
+}
+
+.filegate-brand-copy {
+    max-width: 72ch;
+}
+
+.filegate-brand-eyebrow {
+    color: var(--filegate-accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+}
+
+.filegate-brand-panel h2 {
+    color: #20313a;
+    font-size: 20px;
+    margin: 0 0 8px;
+}
+
+.filegate-brand-panel p {
+    color: var(--filegate-muted);
+    margin: 0;
+}
+
+.filegate-brand-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 10px;
+}
+
+.filegate-layout {
+    display: grid;
+    gap: 18px;
+    margin: 20px 0 24px;
+}
+
+.filegate-panel {
+    background: var(--filegate-panel);
+    border: 1px solid var(--filegate-border);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(32, 49, 58, 0.04);
+    overflow: hidden;
+}
+
+.filegate-panel-heading {
+    align-items: center;
+    background: #f4fafc;
+    border-bottom: 1px solid var(--filegate-border);
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 20px 24px;
+}
+
+.filegate-panel-heading h2,
+.filegate-callout h3,
+.filegate-compatibility h3,
+.filegate-card h3 {
+    margin: 0 0 8px;
+}
+
+.filegate-panel-heading p,
+.filegate-callout p,
+.filegate-card p,
+.filegate-compatibility p {
+    color: var(--filegate-muted);
+    margin: 0;
+}
+
+.filegate-card-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    padding: 24px;
+}
+
+.filegate-card {
+    background: #f8fcfd;
+    border: 1px solid #dde9ed;
+    border-radius: 14px;
+    display: grid;
+    gap: 12px;
+    min-height: 190px;
+    padding: 18px;
+    transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.filegate-card.is-enabled {
+    background: #f5fbfd;
+    border-color: rgba(48, 131, 155, 0.4);
+    box-shadow: 0 8px 18px rgba(48, 131, 155, 0.08);
+}
+
+.filegate-card-top {
+    align-items: start;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.filegate-card-meta {
+    align-items: center;
+    align-self: start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filegate-card-meta span,
+.filegate-card-meta code {
+    background: #edf5f7;
+    border-radius: 999px;
+    color: #536771;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 12px;
+    line-height: 1;
+    padding: 6px 12px;
+    white-space: nowrap;
+}
+
+.filegate-card-flags {
+    align-items: center;
+    align-self: start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filegate-badge {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    padding: 5px 10px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.filegate-badge.is-recommended {
+    background: var(--filegate-accent-soft);
+    color: var(--filegate-accent);
+}
+
+.filegate-badge.is-caution {
+    background: var(--filegate-caution-soft);
+    color: var(--filegate-caution);
+}
+
+.filegate-switch {
+    display: inline-flex;
+    position: relative;
+}
+
+.filegate-switch input {
+    height: 1px;
+    left: -9999px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+}
+
+.filegate-slider {
+    background: #c2d0d5;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-block;
+    height: 32px;
+    position: relative;
+    transition: background 180ms ease;
+    width: 58px;
+}
+
+.filegate-slider::after {
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    content: "";
+    height: 24px;
+    left: 4px;
+    position: absolute;
+    top: 4px;
+    transition: transform 180ms ease;
+    width: 24px;
+}
+
+.filegate-switch input:checked + .filegate-slider {
+    background: var(--filegate-accent);
+}
+
+.filegate-switch input:checked + .filegate-slider::after {
+    transform: translateX(26px);
+}
+
+.filegate-switch input:focus + .filegate-slider {
+    box-shadow: 0 0 0 3px rgba(48, 131, 155, 0.16);
+}
+
+.filegate-table-wrap {
+    overflow-x: auto;
+    padding: 16px 24px 24px;
+}
+
+.filegate-custom-table {
+    border: 1px solid #dde8ec;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.filegate-custom-table thead th {
+    background: #f2f8fa;
+    color: #4d626d;
+    font-weight: 600;
+}
+
+.filegate-custom-table th,
+.filegate-custom-table td {
+    padding: 14px 12px;
+    vertical-align: top;
+}
+
+.filegate-custom-table input[type="text"] {
+    width: 100%;
+}
+
+.filegate-inline-error {
+    color: #b42318;
+    font-size: 12px;
+    margin: 8px 0 0;
+}
+
+.filegate-custom-row.has-error input {
+    border-color: #b42318;
+}
+
+.filegate-empty-state td {
+    color: var(--filegate-muted);
+    padding: 18px 12px;
+    text-align: center;
+}
+
+.filegate-advanced-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    padding: 24px 24px 12px;
+}
+
+.filegate-callout,
+.filegate-compatibility {
+    background: #f8fcfd;
+    border: 1px solid #dde8ec;
+    border-radius: 14px;
+    margin: 0 24px 24px;
+    padding: 18px;
+}
+
+.filegate-advanced-grid .filegate-callout {
+    margin: 0;
+}
+
+.filegate-compatibility ul {
+    margin: 12px 0 0 18px;
+}
+
+.filegate-compatibility.is-clear {
+    background: #f4fbfd;
+}
+
+.filegate-locked-check {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.filegate-action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.filegate-admin .button.button-secondary,
+.filegate-admin .button {
+    align-items: center;
+    border-radius: 8px;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 14px;
+    justify-content: center;
+    line-height: 1;
+    min-height: 42px;
+    padding: 0 18px;
+    white-space: nowrap;
+}
+
+.filegate-admin .button.button-secondary {
+    background: #f4fafc;
+    border-color: #c8d9df;
+    color: #27414b;
+}
+
+.filegate-admin .button.button-secondary:hover,
+.filegate-admin .button.button-secondary:focus {
+    background: #eaf4f7;
+    border-color: #b3cad2;
+    color: #203741;
+}
+
+.filegate-admin .button.button-primary {
+    background: #30839b;
+    border-color: #30839b;
+}
+
+.filegate-admin .button.button-primary:hover,
+.filegate-admin .button.button-primary:focus {
+    background: #276d80;
+    border-color: #276d80;
+}
+
+@media (max-width: 782px) {
+    .filegate-toast-stack {
+        left: 16px;
+        right: 16px;
+        top: 20px;
+        width: auto;
+    }
+
+    .filegate-brand-panel,
+    .filegate-panel-heading {
+        align-items: start;
+        flex-direction: column;
+    }
+
+    .filegate-brand-actions {
+        flex-wrap: wrap;
+    }
+
+    .filegate-card-grid,
+    .filegate-advanced-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filegate-table-wrap {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
