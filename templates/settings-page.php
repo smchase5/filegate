@@ -31,6 +31,32 @@ if (!defined('ABSPATH')) {
         <?php settings_fields('filegate_settings_group'); ?>
         <input type="hidden" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[_action]" id="filegate-action" value="">
 
+        <?php if ($is_first_run) : ?>
+            <section class="filegate-onboarding">
+                <div class="filegate-onboarding__copy">
+                    <p class="filegate-onboarding__eyebrow"><?php esc_html_e('Welcome to FileGate', 'filegate'); ?></p>
+                    <h2><?php esc_html_e('Start with a preset, then fine-tune only what your team needs.', 'filegate'); ?></h2>
+                    <p>
+                        <?php esc_html_e('Most sites do best with lower-risk formats first. You can always add more upload types later, and FileGate keeps SVG uploads behind sanitization when they are enabled.', 'filegate'); ?>
+                    </p>
+                </div>
+                <div class="filegate-onboarding__tips">
+                    <div class="filegate-onboarding-tip">
+                        <strong><?php esc_html_e('Suggested start', 'filegate'); ?></strong>
+                        <p><?php esc_html_e('Choose Safe Defaults if you want a clean, low-risk baseline in one click.', 'filegate'); ?></p>
+                    </div>
+                    <div class="filegate-onboarding-tip">
+                        <strong><?php esc_html_e('SVG note', 'filegate'); ?></strong>
+                        <p><?php esc_html_e('SVG files can contain active content. FileGate sanitizes them automatically whenever SVG uploads are turned on.', 'filegate'); ?></p>
+                    </div>
+                    <div class="filegate-onboarding-tip">
+                        <strong><?php esc_html_e('Custom rules', 'filegate'); ?></strong>
+                        <p><?php esc_html_e('Only add custom extensions when you know the exact file extension and MIME type you need.', 'filegate'); ?></p>
+                    </div>
+                </div>
+            </section>
+        <?php endif; ?>
+
         <div class="filegate-layout">
             <section class="filegate-panel">
                 <div class="filegate-panel-heading">
@@ -38,9 +64,32 @@ if (!defined('ABSPATH')) {
                         <h2><?php esc_html_e('Common File Types', 'filegate'); ?></h2>
                         <p><?php esc_html_e('Turn on the formats your team needs most. FileGate only adds rules for the types you enable.', 'filegate'); ?></p>
                     </div>
-                    <button type="button" class="button button-secondary" id="filegate-apply-preset">
-                        <?php esc_html_e('Apply Safe Preset', 'filegate'); ?>
-                    </button>
+                    <div class="filegate-preset-actions">
+                        <?php foreach ($presets as $preset_key => $preset) : ?>
+                            <button
+                                type="button"
+                                class="button button-secondary filegate-preset-button"
+                                data-filegate-preset="<?php echo esc_attr($preset_key); ?>"
+                                aria-label="<?php echo esc_attr(sprintf(__('Apply %s preset', 'filegate'), $preset['label'])); ?>"
+                            >
+                                <?php echo esc_html($preset['label']); ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="filegate-preset-strip">
+                    <?php foreach ($presets as $preset_key => $preset) : ?>
+                        <article class="filegate-preset-card">
+                            <div class="filegate-preset-card__top">
+                                <h3><?php echo esc_html($preset['label']); ?></h3>
+                                <button type="button" class="button button-secondary filegate-preset-card__button" data-filegate-preset="<?php echo esc_attr($preset_key); ?>">
+                                    <?php esc_html_e('Use Preset', 'filegate'); ?>
+                                </button>
+                            </div>
+                            <p><?php echo esc_html($preset['description']); ?></p>
+                        </article>
+                    <?php endforeach; ?>
                 </div>
 
                 <div class="filegate-card-grid">
@@ -86,6 +135,14 @@ if (!defined('ABSPATH')) {
                                     <span class="filegate-badge is-caution"><?php esc_html_e('Sanitized', 'filegate'); ?></span>
                                 <?php endif; ?>
                             </div>
+
+                            <?php if ('svg' === $key) : ?>
+                                <p class="filegate-card-note"><?php esc_html_e('SVGs can contain scripts and embedded content. FileGate keeps sanitization locked on to reduce obvious XSS risk.', 'filegate'); ?></p>
+                            <?php elseif (in_array($key, array('heic', 'heif'), true)) : ?>
+                                <p class="filegate-card-note"><?php esc_html_e('These formats are handy for upload intake, but front-end display support can vary by browser, editor, or theme workflow.', 'filegate'); ?></p>
+                            <?php elseif ('json' === $key) : ?>
+                                <p class="filegate-card-note"><?php esc_html_e('JSON uploads are useful for imports and exports. Allowing JSON here does not make the files executable.', 'filegate'); ?></p>
+                            <?php endif; ?>
                         </article>
                     <?php endforeach; ?>
                 </div>
@@ -100,6 +157,11 @@ if (!defined('ABSPATH')) {
                     <button type="button" class="button button-secondary" id="filegate-add-row">
                         <?php esc_html_e('Add Custom Type', 'filegate'); ?>
                     </button>
+                </div>
+
+                <div class="filegate-inline-help">
+                    <p><strong><?php esc_html_e('What is a MIME type?', 'filegate'); ?></strong> <?php esc_html_e('It is the format identifier WordPress uses to recognize a file, such as image/svg+xml or application/json.', 'filegate'); ?></p>
+                    <p><strong><?php esc_html_e('Helpful tip:', 'filegate'); ?></strong> <?php esc_html_e('If you are not sure which MIME type to use, check the file format documentation before adding a custom rule.', 'filegate'); ?></p>
                 </div>
 
                 <div class="filegate-table-wrap">
@@ -162,7 +224,7 @@ if (!defined('ABSPATH')) {
 
                     <div class="filegate-callout">
                         <h3><?php esc_html_e('Quick Actions', 'filegate'); ?></h3>
-                        <p><?php esc_html_e('Safe Preset turns on lower-risk formats only. Reset returns FileGate to a clean baseline without removing the plugin.', 'filegate'); ?></p>
+                        <p><?php esc_html_e('Presets help you start faster, and reset returns FileGate to a clean baseline without removing the plugin.', 'filegate'); ?></p>
                         <div class="filegate-action-row">
                             <button type="button" class="button" id="filegate-reset-defaults">
                                 <?php esc_html_e('Reset to Defaults', 'filegate'); ?>
