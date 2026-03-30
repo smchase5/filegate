@@ -12,15 +12,20 @@
         var config = window.filegateAdmin || {};
         var strings = config.strings || {};
         var reservedExtensions = config.reservedExtensions || {};
-        var recommendedKeys = config.recommendedKeys || [];
+        var presets = config.presets || {};
 
         var form = document.getElementById("filegate-settings-form");
+        if (!form) {
+            return;
+        }
+
         var tbody = document.getElementById("filegate-custom-types");
         var addRowButton = document.getElementById("filegate-add-row");
-        var presetButton = document.getElementById("filegate-apply-preset");
+        var presetButtons = form.querySelectorAll("[data-filegate-preset]");
         var resetButton = document.getElementById("filegate-reset-defaults");
         var actionInput = document.getElementById("filegate-action");
-        if (!form || !tbody) {
+        var onboardingPanel = form.querySelector(".filegate-onboarding");
+        if (!tbody) {
             return;
         }
 
@@ -32,6 +37,14 @@
             : "Save Changes";
         var isSaving = false;
         var hasUnsavedCustomChanges = false;
+
+        function getBuiltinCheckbox(key) {
+            return form.querySelector('input[name="filegate_settings[enabled_types][' + key + ']"]');
+        }
+
+        function getSvgCheckbox() {
+            return form.querySelector('input[name="filegate_settings[svg_enabled]"]');
+        }
 
         function clearEmptyState() {
             var empty = tbody.querySelector(".filegate-empty-state");
@@ -265,17 +278,39 @@
                         throw new Error(payload && payload.data && payload.data.message ? payload.data.message : (strings.saveFailed || "Save failed."));
                     }
 
+                    if (payload.data && payload.data.summary) {
+                        details = details.concat(payload.data.summary);
+                    }
+
                     if (payload.data && payload.data.notices) {
-                        details = payload.data.notices.map(function (notice) {
+                        details = details.concat(payload.data.notices.map(function (notice) {
                             return notice.message;
-                        }).filter(Boolean);
+                        }).filter(Boolean));
                     }
 
                     actionInput.value = "";
                     hasUnsavedCustomChanges = false;
                     setSaveIndicator("saved", strings.allSaved || "All changes saved");
 
-                    if (saveOptions.toast === false && details.length) {
+                    if (payload.data && payload.data.settings) {
+                        config.currentSettings = payload.data.settings;
+                    }
+
+                    if (onboardingPanel && payload.data && payload.data.settings) {
+                        var hasEnabledTypes = false;
+
+                        Object.keys(payload.data.settings.enabled_types || {}).forEach(function (key) {
+                            if (payload.data.settings.enabled_types[key]) {
+                                hasEnabledTypes = true;
+                            }
+                        });
+
+                        if (hasEnabledTypes || payload.data.settings.svg_enabled || (payload.data.settings.custom_types || []).length) {
+                            onboardingPanel.hidden = true;
+                        }
+                    }
+
+                    if (saveOptions.toast === false && payload.data.type === "warning" && details.length) {
                         showToast(
                             payload.data.message || strings.savedWithNotes || "Settings saved with a few notes.",
                             payload.data.type || "warning",
@@ -352,31 +387,37 @@
             }
         });
 
-        presetButton.addEventListener("click", function () {
-            recommendedKeys.forEach(function (key) {
-                var input = form.querySelector('input[name="filegate_settings[enabled_types][' + key + ']"]');
+        function applyPreset(presetKey) {
+            var preset = presets[presetKey];
 
-                if (input) {
-                    input.checked = true;
+            if (!preset) {
+                return;
+            }
+
+            form.querySelectorAll('input[name^="filegate_settings[enabled_types]"]').forEach(function (checkbox) {
+                var match = checkbox.name.match(/\[enabled_types]\[([^\]]+)]$/);
+                var key = match ? match[1] : "";
+
+                if (!key) {
+                    return;
                 }
+
+                checkbox.checked = !!(preset.enabled_keys && preset.enabled_keys.indexOf(key) !== -1);
             });
 
-            ["heic", "heif"].forEach(function (key) {
-                var input = form.querySelector('input[name="filegate_settings[enabled_types][' + key + ']"]');
-
-                if (input) {
-                    input.checked = false;
-                }
-            });
-
-            var svg = form.querySelector('input[name="filegate_settings[svg_enabled]"]');
-
-            if (svg) {
-                svg.checked = false;
+            if (getSvgCheckbox()) {
+                getSvgCheckbox().checked = !!preset.svg_enabled;
             }
 
             syncCardState();
-            saveSettings({ toast: false });
+            setSaveIndicator("unsaved", strings.unsavedChanges || "Unsaved changes");
+            saveSettings({ toast: true });
+        }
+
+        presetButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                applyPreset(button.getAttribute("data-filegate-preset"));
+            });
         });
 
         resetButton.addEventListener("click", function () {

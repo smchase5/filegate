@@ -92,6 +92,68 @@ body.settings_page_filegate #wpbody-content {
     max-width: 1120px;
 }
 
+.filegate-onboarding {
+    background: linear-gradient(135deg, #f6fbfd 0%, #eef7f9 100%);
+    border: 1px solid var(--filegate-border);
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(32, 49, 58, 0.05);
+    display: grid;
+    gap: 18px;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.95fr);
+    margin: 18px 0 0;
+    padding: 24px;
+}
+
+.filegate-onboarding[hidden] {
+    display: none;
+}
+
+.filegate-onboarding__eyebrow {
+    color: var(--filegate-accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+}
+
+.filegate-onboarding h2 {
+    font-size: 28px;
+    line-height: 1.1;
+    margin: 0 0 12px;
+    max-width: 18ch;
+}
+
+.filegate-onboarding__copy p:last-child {
+    color: var(--filegate-muted);
+    margin-bottom: 0;
+    max-width: 66ch;
+}
+
+.filegate-onboarding__tips {
+    display: grid;
+    gap: 12px;
+}
+
+.filegate-onboarding-tip {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid #d8e7eb;
+    border-radius: 14px;
+    padding: 14px 16px;
+}
+
+.filegate-onboarding-tip strong {
+    color: #20313a;
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.filegate-onboarding-tip p {
+    color: var(--filegate-muted);
+    margin: 0;
+}
+
 .filegate-intro {
     max-width: 72ch;
     color: var(--filegate-muted);
@@ -115,11 +177,10 @@ body.settings_page_filegate #wpbody-content {
     border-left: 4px solid var(--filegate-accent);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(32, 49, 58, 0.12);
-    display: flex;
-    gap: 12px;
     opacity: 0;
-    padding: 14px 16px;
+    padding: 14px 44px 14px 16px;
     pointer-events: auto;
+    position: relative;
     transform: translateY(-8px);
     transition: opacity 180ms ease, transform 180ms ease;
 }
@@ -167,6 +228,9 @@ body.settings_page_filegate #wpbody-content {
     line-height: 1;
     margin: 0;
     padding: 0;
+    position: absolute;
+    right: 14px;
+    top: 12px;
 }
 
 .filegate-brand-panel {
@@ -251,6 +315,75 @@ body.settings_page_filegate #wpbody-content {
     margin: 0;
 }
 
+.filegate-preset-strip-heading {
+    padding: 20px 24px 0;
+}
+
+.filegate-preset-strip-heading h3 {
+    color: #20313a;
+    font-size: 16px;
+    margin: 0 0 6px;
+}
+
+.filegate-preset-strip-heading p {
+    color: var(--filegate-muted);
+    margin: 0;
+    max-width: 72ch;
+}
+
+.filegate-preset-strip {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    padding: 20px 24px 0;
+}
+
+.filegate-preset-card {
+    background: #fbfdfe;
+    border: 1px solid #dbe8ec;
+    border-radius: 14px;
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+}
+
+.filegate-preset-card.is-featured {
+    background: linear-gradient(180deg, #fbfeff 0%, #f4fafc 100%);
+    border-color: rgba(48, 131, 155, 0.35);
+    box-shadow: 0 10px 22px rgba(48, 131, 155, 0.08);
+}
+
+.filegate-preset-card__top {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+}
+
+.filegate-preset-card__title {
+    display: grid;
+    flex: 1 1 180px;
+    gap: 8px;
+    min-width: 0;
+}
+
+.filegate-preset-card__top h3 {
+    margin: 0;
+}
+
+.filegate-preset-card p {
+    color: var(--filegate-muted);
+    margin: 0;
+}
+
+.filegate-preset-card__button.button.button-secondary {
+    flex: 0 0 auto;
+    min-height: 34px;
+    margin-left: auto;
+    padding: 0 12px;
+}
+
 .filegate-card-grid {
     display: grid;
     gap: 16px;
@@ -273,6 +406,17 @@ body.settings_page_filegate #wpbody-content {
     background: #f5fbfd;
     border-color: rgba(48, 131, 155, 0.4);
     box-shadow: 0 8px 18px rgba(48, 131, 155, 0.08);
+}
+
+.filegate-card-note {
+    background: #ffffff;
+    border: 1px solid #e0ebee;
+    border-radius: 12px;
+    color: #50616b;
+    font-size: 12px;
+    line-height: 1.45;
+    margin: 0;
+    padding: 10px 12px;
 }
 
 .filegate-card-top {
@@ -390,6 +534,19 @@ body.settings_page_filegate #wpbody-content {
     padding: 16px 24px 24px;
 }
 
+.filegate-inline-help {
+    background: #f9fcfd;
+    border-bottom: 1px solid #e1ebee;
+    color: var(--filegate-muted);
+    display: grid;
+    gap: 8px;
+    padding: 16px 24px 0;
+}
+
+.filegate-inline-help p {
+    margin: 0;
+}
+
 .filegate-custom-table {
     border: 1px solid #dde8ec;
     border-radius: 12px;
@@ -408,8 +565,76 @@ body.settings_page_filegate #wpbody-content {
     vertical-align: top;
 }
 
+.filegate-custom-table th:last-child,
+.filegate-custom-table td:last-child {
+    text-align: center;
+    white-space: nowrap;
+    width: 1%;
+}
+
 .filegate-custom-table input[type="text"] {
+    border-radius: 8px;
+    min-height: 42px;
+    padding: 0 14px;
     width: 100%;
+}
+
+#filegate-add-row.button.button-secondary {
+    background: #f4fafc;
+    border-color: #c8d9df;
+    box-shadow: none;
+    color: #225366;
+    font-weight: 600;
+    gap: 8px;
+    padding: 0 18px;
+}
+
+#filegate-add-row.button.button-secondary::before {
+    content: "+";
+    display: inline-block;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+    margin-right: 0;
+    transform: translateY(-1px);
+}
+
+#filegate-add-row.button.button-secondary:hover,
+#filegate-add-row.button.button-secondary:focus {
+    background: #eaf4f7;
+    border-color: #b3cad2;
+    box-shadow: 0 0 0 3px rgba(48, 131, 155, 0.12);
+    color: #203741;
+}
+
+.filegate-remove-row {
+    appearance: none;
+    align-items: center;
+    background: #fff7f7;
+    border: 1px solid #f0c9cd;
+    border-radius: 8px;
+    color: #b8444e;
+    cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 16px;
+    text-decoration: none;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+    white-space: nowrap;
+}
+
+.filegate-remove-row:hover,
+.filegate-remove-row:focus {
+    background: #fff0f1;
+    border-color: #e5b3b8;
+    box-shadow: 0 0 0 3px rgba(184, 68, 78, 0.10);
+    color: #9f3740;
+    text-decoration: none;
 }
 
 .filegate-inline-error {
@@ -515,6 +740,11 @@ body.settings_page_filegate #wpbody-content {
         width: auto;
     }
 
+    .filegate-onboarding {
+        grid-template-columns: 1fr;
+        padding: 18px;
+    }
+
     .filegate-brand-panel,
     .filegate-panel-heading {
         align-items: start;
@@ -526,12 +756,17 @@ body.settings_page_filegate #wpbody-content {
     }
 
     .filegate-card-grid,
-    .filegate-advanced-grid {
+    .filegate-advanced-grid,
+    .filegate-preset-strip {
         grid-template-columns: 1fr;
     }
 
     .filegate-table-wrap {
         padding-left: 16px;
         padding-right: 16px;
+    }
+
+    #filegate-add-row.button.button-secondary {
+        width: 100%;
     }
 }

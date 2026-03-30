@@ -124,6 +124,8 @@ class FileGate_Settings
             return;
         }
 
+        $settings = $this->get_settings();
+
         $css_path = FILEGATE_PATH . 'assets/admin.css';
         $js_path  = FILEGATE_PATH . 'assets/admin.js';
         $version  = FILEGATE_VERSION;
@@ -151,6 +153,9 @@ class FileGate_Settings
                 'saveNonce'           => wp_create_nonce('filegate_save_settings'),
                 'reservedExtensions' => $this->get_reserved_extensions(),
                 'recommendedKeys'    => FileGate_Mime_Manager::get_recommended_keys(),
+                'currentSettings'    => $settings,
+                'isFirstRun'         => $this->is_first_run($settings),
+                'presets'            => $this->get_presets(),
                 'strings'            => array(
                     'invalidExtension' => __('Use lowercase letters and numbers only, with optional single separators like dash, dot, or underscore.', 'filegate'),
                     'invalidMime'      => __('Use a valid MIME type like image/svg+xml or application/json.', 'filegate'),
@@ -167,6 +172,7 @@ class FileGate_Settings
                     'unsavedChanges'   => __('Unsaved changes', 'filegate'),
                     'savingStatus'     => __('Saving changes...', 'filegate'),
                     'leaveWarning'     => __('You have unsaved FileGate changes. Are you sure you want to leave this page?', 'filegate'),
+                    'presetApplied'    => __('Preset applied.', 'filegate'),
                 ),
             )
         );
@@ -190,6 +196,7 @@ class FileGate_Settings
             );
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized in sanitize_settings().
         $raw_settings = isset($_POST[ self::OPTION_NAME ]) ? wp_unslash($_POST[ self::OPTION_NAME ]) : array();
 
         global $wp_settings_errors;
@@ -208,6 +215,7 @@ class FileGate_Settings
                 'message' => $this->get_ajax_success_message($action, $type),
                 'type'    => $type,
                 'notices' => $this->prepare_notices_for_response($notices),
+                'summary' => $this->build_save_summary($settings, $notices, $action),
                 'settings' => $settings,
             )
         );
@@ -227,6 +235,8 @@ class FileGate_Settings
         $settings               = $this->get_settings();
         $builtin_types          = FileGate_Mime_Manager::get_builtin_types();
         $recommended_keys       = FileGate_Mime_Manager::get_recommended_keys();
+        $presets                = $this->get_presets();
+        $is_first_run           = $this->is_first_run($settings);
         $compatibility_messages = $this->mime_manager ? $this->mime_manager->get_compatibility_messages() : array();
 
         require FILEGATE_PATH . 'templates/settings-page.php';
@@ -254,6 +264,41 @@ class FileGate_Settings
             'custom_types'  => array(),
             'svg_enabled'   => false,
             'svg_sanitize'  => false,
+        );
+    }
+
+    /**
+     * Preset definitions used by the admin UI.
+     *
+     * @return array<string,array<string,mixed>>
+     */
+    public function get_presets()
+    {
+        return array(
+            'safe'      => array(
+                'label'        => __('Safe Defaults', 'filegate'),
+                'description'  => __('Best starting point for most sites. Enables lower-risk formats only.', 'filegate'),
+                'enabled_keys' => array('webp', 'avif', 'json', 'csv', 'ico'),
+                'svg_enabled'  => false,
+            ),
+            'content'   => array(
+                'label'        => __('Content Team', 'filegate'),
+                'description'  => __('Adds everyday publishing formats for editorial and marketing teams.', 'filegate'),
+                'enabled_keys' => array('webp', 'avif', 'json', 'csv', 'ico', 'heic', 'heif'),
+                'svg_enabled'  => false,
+            ),
+            'designer'  => array(
+                'label'        => __('Designer', 'filegate'),
+                'description'  => __('Includes visual asset formats and enables sanitized SVG uploads.', 'filegate'),
+                'enabled_keys' => array('webp', 'avif', 'csv', 'ico', 'heic', 'heif'),
+                'svg_enabled'  => true,
+            ),
+            'developer' => array(
+                'label'        => __('Developer', 'filegate'),
+                'description'  => __('Turns on every built-in format for broader testing and handoff workflows.', 'filegate'),
+                'enabled_keys' => array('webp', 'avif', 'json', 'csv', 'ico', 'heic', 'heif'),
+                'svg_enabled'  => true,
+            ),
         );
     }
 
@@ -451,6 +496,82 @@ class FileGate_Settings
     }
 
     /**
+     * Build concise save-summary bullets for the UI.
+     *
+     * @param array<string,mixed>               $settings Saved settings.
+     * @param array<int,array<string,string>>   $notices  Validation notices.
+     * @param string                            $action   Save action.
+     * @return string[]
+     */
+    private function build_save_summary($settings, $notices, $action)
+    {
+        $summary = array();
+
+        if ('reset' === $action) {
+            return array(
+                __('Built-in upload types were returned to their default off state.', 'filegate'),
+                __('SVG uploads are disabled again until you explicitly enable them.', 'filegate'),
+            );
+        }
+
+        $enabled_labels = array();
+
+        foreach (FileGate_Mime_Manager::get_builtin_types() as $key => $type) {
+            $enabled = ('svg' === $key) ? !empty($settings['svg_enabled']) : !empty($settings['enabled_types'][$key]);
+
+            if ($enabled) {
+                $enabled_labels[] = $type['label'];
+            }
+        }
+
+        if (!empty($enabled_labels)) {
+            $summary[] = sprintf(
+                /* translators: %s: comma-separated enabled type labels */
+                __('Enabled built-in types: %s.', 'filegate'),
+                implode(', ', $enabled_labels)
+            );
+        } else {
+            $summary[] = __('No built-in upload types are currently enabled.', 'filegate');
+        }
+
+        $summary[] = !empty($settings['svg_enabled'])
+            ? __('SVG uploads are enabled with FileGate sanitization locked on.', 'filegate')
+            : __('SVG uploads are currently off.', 'filegate');
+
+        if (!empty($settings['custom_types'])) {
+            $custom_labels = array();
+
+            foreach ($settings['custom_types'] as $custom_type) {
+                $custom_labels[] = '.' . $custom_type['ext'];
+            }
+
+            $summary[] = sprintf(
+                /* translators: 1: count of custom types, 2: comma-separated extensions */
+                __('Saved %1$d custom upload rule(s): %2$s.', 'filegate'),
+                count($custom_labels),
+                implode(', ', $custom_labels)
+            );
+        } else {
+            $summary[] = __('No custom upload rules are saved yet.', 'filegate');
+        }
+
+        if (!empty($notices)) {
+            $summary[] = sprintf(
+                /* translators: %d: number of notices */
+                _n(
+                    'FileGate saved your changes with %d note to review.',
+                    'FileGate saved your changes with %d notes to review.',
+                    count($notices),
+                    'filegate'
+                ),
+                count($notices)
+            );
+        }
+
+        return $summary;
+    }
+
+    /**
      * Normalize an extension.
      *
      * @param string $extension Raw extension.
@@ -498,5 +619,26 @@ class FileGate_Settings
         }
 
         return $extensions;
+    }
+
+    /**
+     * Determine whether the user is seeing FileGate in an untouched state.
+     *
+     * @param array<string,mixed> $settings Parsed settings.
+     * @return bool
+     */
+    private function is_first_run($settings)
+    {
+        if (!empty($settings['svg_enabled']) || !empty($settings['custom_types'])) {
+            return false;
+        }
+
+        foreach ($settings['enabled_types'] as $enabled) {
+            if (!empty($enabled)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
