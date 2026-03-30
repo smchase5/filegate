@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: FileGate - Control WordPress Upload Types
+ * Plugin Name: FileGate - Control Upload Types
  * Plugin URI: https://frontierwp.com/filegate
  * Description: Safely enable additional WordPress upload types with a simple admin interface.
  * Version: 1.0.0
@@ -77,24 +77,12 @@ class FileGate
      */
     private function __construct()
     {
-        add_action('plugins_loaded', array($this, 'load_textdomain'));
-
         $this->settings     = new FileGate_Settings();
         $this->mime_manager = new FileGate_Mime_Manager($this->settings);
         $this->svg_handler  = new FileGate_SVG_Handler($this->settings);
 
         $this->settings->set_mime_manager($this->mime_manager);
         $this->settings->set_svg_handler($this->svg_handler);
-    }
-
-    /**
-     * Load translations.
-     *
-     * @return void
-     */
-    public function load_textdomain()
-    {
-        load_plugin_textdomain('filegate', false, dirname(plugin_basename(FILEGATE_FILE)) . '/languages');
     }
 }
 

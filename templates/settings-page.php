@@ -64,50 +64,48 @@ if (!defined('ABSPATH')) {
                         <h2><?php esc_html_e('Common File Types', 'filegate'); ?></h2>
                         <p><?php esc_html_e('Turn on the formats your team needs most. FileGate only adds rules for the types you enable.', 'filegate'); ?></p>
                     </div>
-                    <div class="filegate-preset-actions">
-                        <?php foreach ($presets as $preset_key => $preset) : ?>
-                            <button
-                                type="button"
-                                class="button button-secondary filegate-preset-button"
-                                data-filegate-preset="<?php echo esc_attr($preset_key); ?>"
-                                aria-label="<?php echo esc_attr(sprintf(__('Apply %s preset', 'filegate'), $preset['label'])); ?>"
-                            >
-                                <?php echo esc_html($preset['label']); ?>
-                            </button>
-                        <?php endforeach; ?>
-                    </div>
+                </div>
+
+                <div class="filegate-preset-strip-heading">
+                    <h3><?php esc_html_e('Quick Start Presets', 'filegate'); ?></h3>
+                    <p><?php esc_html_e('Choose a preset to turn on a sensible group of upload types, then fine-tune anything you want below.', 'filegate'); ?></p>
                 </div>
 
                 <div class="filegate-preset-strip">
-                    <?php foreach ($presets as $preset_key => $preset) : ?>
-                        <article class="filegate-preset-card">
+                    <?php foreach ($presets as $filegate_preset_key => $filegate_preset) : ?>
+                        <article class="filegate-preset-card <?php echo 'safe' === $filegate_preset_key ? 'is-featured' : ''; ?>">
                             <div class="filegate-preset-card__top">
-                                <h3><?php echo esc_html($preset['label']); ?></h3>
-                                <button type="button" class="button button-secondary filegate-preset-card__button" data-filegate-preset="<?php echo esc_attr($preset_key); ?>">
+                                <div class="filegate-preset-card__title">
+                                    <h3><?php echo esc_html($filegate_preset['label']); ?></h3>
+                                    <?php if ('safe' === $filegate_preset_key) : ?>
+                                        <span class="filegate-badge is-recommended"><?php esc_html_e('Recommended Start', 'filegate'); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <button type="button" class="button button-secondary filegate-preset-card__button" data-filegate-preset="<?php echo esc_attr($filegate_preset_key); ?>">
                                     <?php esc_html_e('Use Preset', 'filegate'); ?>
                                 </button>
                             </div>
-                            <p><?php echo esc_html($preset['description']); ?></p>
+                            <p><?php echo esc_html($filegate_preset['description']); ?></p>
                         </article>
                     <?php endforeach; ?>
                 </div>
 
                 <div class="filegate-card-grid">
-                    <?php foreach ($builtin_types as $key => $type) : ?>
+                    <?php foreach ($builtin_types as $filegate_type_key => $filegate_type) : ?>
                         <?php
-                        $enabled = ('svg' === $key) ? !empty($settings['svg_enabled']) : !empty($settings['enabled_types'][$key]);
+                        $filegate_enabled = ('svg' === $filegate_type_key) ? !empty($settings['svg_enabled']) : !empty($settings['enabled_types'][$filegate_type_key]);
                         ?>
-                        <article class="filegate-card <?php echo $enabled ? 'is-enabled' : ''; ?>">
+                        <article class="filegate-card <?php echo $filegate_enabled ? 'is-enabled' : ''; ?>">
                             <div class="filegate-card-top">
                                 <div>
-                                    <h3><?php echo esc_html($type['label']); ?></h3>
-                                    <p><?php echo esc_html($type['description']); ?></p>
+                                    <h3><?php echo esc_html($filegate_type['label']); ?></h3>
+                                    <p><?php echo esc_html($filegate_type['description']); ?></p>
                                 </div>
                                 <label class="filegate-switch">
-                                    <?php if ('svg' === $key) : ?>
-                                        <input type="checkbox" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[svg_enabled]" value="1" <?php checked($enabled); ?>>
+                                    <?php if ('svg' === $filegate_type_key) : ?>
+                                        <input type="checkbox" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[svg_enabled]" value="1" <?php checked($filegate_enabled); ?>>
                                     <?php else : ?>
-                                        <input type="checkbox" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[enabled_types][<?php echo esc_attr($key); ?>]" value="1" <?php checked($enabled); ?>>
+                                        <input type="checkbox" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[enabled_types][<?php echo esc_attr($filegate_type_key); ?>]" value="1" <?php checked($filegate_enabled); ?>>
                                     <?php endif; ?>
                                     <span class="filegate-slider" aria-hidden="true"></span>
                                     <span class="screen-reader-text">
@@ -115,7 +113,7 @@ if (!defined('ABSPATH')) {
                                         printf(
                                             /* translators: %s: file type label */
                                             esc_html__('Enable %s uploads', 'filegate'),
-                                            esc_html($type['label'])
+                                            esc_html($filegate_type['label'])
                                         );
                                         ?>
                                     </span>
@@ -123,24 +121,24 @@ if (!defined('ABSPATH')) {
                             </div>
 
                             <div class="filegate-card-meta">
-                                <span>.<?php echo esc_html($type['ext']); ?></span>
-                                <code><?php echo esc_html($type['mime']); ?></code>
+                                <span>.<?php echo esc_html($filegate_type['ext']); ?></span>
+                                <code><?php echo esc_html($filegate_type['mime']); ?></code>
                             </div>
 
                             <div class="filegate-card-flags">
-                                <?php if (!empty($type['recommended'])) : ?>
+                                <?php if (!empty($filegate_type['recommended'])) : ?>
                                     <span class="filegate-badge is-recommended"><?php esc_html_e('Recommended', 'filegate'); ?></span>
                                 <?php endif; ?>
-                                <?php if (!empty($type['risky'])) : ?>
+                                <?php if (!empty($filegate_type['risky'])) : ?>
                                     <span class="filegate-badge is-caution"><?php esc_html_e('Sanitized', 'filegate'); ?></span>
                                 <?php endif; ?>
                             </div>
 
-                            <?php if ('svg' === $key) : ?>
+                            <?php if ('svg' === $filegate_type_key) : ?>
                                 <p class="filegate-card-note"><?php esc_html_e('SVGs can contain scripts and embedded content. FileGate keeps sanitization locked on to reduce obvious XSS risk.', 'filegate'); ?></p>
-                            <?php elseif (in_array($key, array('heic', 'heif'), true)) : ?>
+                            <?php elseif (in_array($filegate_type_key, array('heic', 'heif'), true)) : ?>
                                 <p class="filegate-card-note"><?php esc_html_e('These formats are handy for upload intake, but front-end display support can vary by browser, editor, or theme workflow.', 'filegate'); ?></p>
-                            <?php elseif ('json' === $key) : ?>
+                            <?php elseif ('json' === $filegate_type_key) : ?>
                                 <p class="filegate-card-note"><?php esc_html_e('JSON uploads are useful for imports and exports. Allowing JSON here does not make the files executable.', 'filegate'); ?></p>
                             <?php endif; ?>
                         </article>
@@ -176,18 +174,18 @@ if (!defined('ABSPATH')) {
                         </thead>
                         <tbody id="filegate-custom-types">
                             <?php if (!empty($settings['custom_types'])) : ?>
-                                <?php foreach ($settings['custom_types'] as $index => $custom_type) : ?>
+                                <?php foreach ($settings['custom_types'] as $filegate_index => $filegate_custom_type) : ?>
                                     <tr class="filegate-custom-row">
                                         <td>
-                                            <input type="text" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[custom_types][<?php echo esc_attr((string) $index); ?>][ext]" value="<?php echo esc_attr($custom_type['ext']); ?>" class="regular-text filegate-ext-input" placeholder="dwg">
+                                            <input type="text" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[custom_types][<?php echo esc_attr((string) $filegate_index); ?>][ext]" value="<?php echo esc_attr($filegate_custom_type['ext']); ?>" class="regular-text filegate-ext-input" placeholder="dwg">
                                             <p class="filegate-inline-error" hidden></p>
                                         </td>
                                         <td>
-                                            <input type="text" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[custom_types][<?php echo esc_attr((string) $index); ?>][mime]" value="<?php echo esc_attr($custom_type['mime']); ?>" class="regular-text filegate-mime-input" placeholder="image/vnd.dwg">
+                                            <input type="text" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[custom_types][<?php echo esc_attr((string) $filegate_index); ?>][mime]" value="<?php echo esc_attr($filegate_custom_type['mime']); ?>" class="regular-text filegate-mime-input" placeholder="image/vnd.dwg">
                                             <p class="filegate-inline-error" hidden></p>
                                         </td>
                                         <td>
-                                            <input type="text" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[custom_types][<?php echo esc_attr((string) $index); ?>][label]" value="<?php echo esc_attr($custom_type['label']); ?>" class="regular-text" placeholder="<?php esc_attr_e('Optional label', 'filegate'); ?>">
+                                            <input type="text" name="<?php echo esc_attr(FileGate_Settings::OPTION_NAME); ?>[custom_types][<?php echo esc_attr((string) $filegate_index); ?>][label]" value="<?php echo esc_attr($filegate_custom_type['label']); ?>" class="regular-text" placeholder="<?php esc_attr_e('Optional label', 'filegate'); ?>">
                                         </td>
                                         <td>
                                             <button type="button" class="button-link-delete filegate-remove-row"><?php esc_html_e('Remove', 'filegate'); ?></button>
@@ -237,8 +235,8 @@ if (!defined('ABSPATH')) {
                     <div class="filegate-compatibility">
                         <h3><?php esc_html_e('Compatibility Notes', 'filegate'); ?></h3>
                         <ul>
-                            <?php foreach ($compatibility_messages as $message) : ?>
-                                <li><?php echo esc_html($message); ?></li>
+                            <?php foreach ($compatibility_messages as $filegate_message) : ?>
+                                <li><?php echo esc_html($filegate_message); ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>

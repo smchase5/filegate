@@ -196,6 +196,7 @@ class FileGate_Settings
             );
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized in sanitize_settings().
         $raw_settings = isset($_POST[ self::OPTION_NAME ]) ? wp_unslash($_POST[ self::OPTION_NAME ]) : array();
 
         global $wp_settings_errors;

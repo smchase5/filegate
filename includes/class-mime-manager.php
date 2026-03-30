@@ -204,6 +204,7 @@ class FileGate_Mime_Manager
     {
         $settings  = $this->settings->get_settings();
         $builtins  = self::get_builtin_types();
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core WordPress hook.
         $effective = apply_filters('upload_mimes', array(), wp_get_current_user());
         $messages  = array();
 
